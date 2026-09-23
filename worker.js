@@ -169,7 +169,7 @@ export default {
 
     if (request.method === "GET" && url.pathname === "/admin/data") {
       const key = url.searchParams.get("key") || "";
-      if (!env.ADMIN_TOKEN || key !== env.ADMIN_TOKEN) {
+      if (!(await checkAuth(env, key))) {
         return json({ error: "Não autorizado." }, 401);
       }
       const { results } = await env.DB.prepare(
@@ -211,6 +211,16 @@ export default {
     return json({ error: "Not found" }, 404);
   },
 };
+
+async function checkAuth(env, key) {
+  if (!key) return false;
+  try {
+    const row = await env.DB.prepare("SELECT password FROM admin LIMIT 1").first();
+    if (row && row.password) return key === row.password;
+  } catch {}
+  if (env.ADMIN_TOKEN) return key === env.ADMIN_TOKEN;
+  return false;
+}
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
