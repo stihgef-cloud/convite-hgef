@@ -1,0 +1,8 @@
+name = "convite-hgef"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hgf-rsvp"
+database_id = "aa8b8a14-91fa-4409-b421-f2516072d6cb"
